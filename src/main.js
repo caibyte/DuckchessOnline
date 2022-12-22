@@ -390,7 +390,7 @@
 				ctx.fillStyle = "#666";
 				ctx.textAlign = "center";
 				ctx.textBaseline = "middle";
-				ctx.font="30px qwq";
+				ctx.font="30px sans-serif";
 				ctx.fillText(i, boardRect.left + blockSize / 2 + i * blockSize, boardRect.bottom + 15);
 			}
 			for (let i = 0; i < hSize; ++i) {
@@ -402,7 +402,7 @@
 				ctx.fillStyle = "#666";
 				ctx.textAlign = "center";
 				ctx.textBaseline = "middle";
-				ctx.font="30px qwq";
+				ctx.font="30px sans-serif";
 				ctx.fillText(hSize - i - 1, boardRect.left - 15, boardRect.top + blockSize / 2 + i * blockSize);
 			}
 		}
@@ -452,7 +452,7 @@
 						ctx.fillStyle = map[i][j].team === 1 ? "#f00" : "#00f";
 						ctx.textAlign = "center";
 						ctx.textBaseline = "middle";
-						ctx.font="25px qwq";
+						ctx.font="25px sans-serif";
 						ctx.fillText(map[i][j].cName, x, y);
 						//render shiny sign
 						ctx.beginPath();
@@ -477,7 +477,7 @@
 			ctx.fillStyle = textColor;
 			ctx.textAlign = "center";
 			ctx.textBaseline = "middle";
-			ctx.font="30px qwq";
+			ctx.font="30px sans-serif";
 			ctx.fillText(text, textRect.midx, textRect.midy);
 		}
 		const renderCurtain = () => {
