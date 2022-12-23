@@ -329,8 +329,8 @@
 		updateAnimation();
 	}
 	CanvasRenderingContext2D.prototype.box = function (x, y, l, r, w, c) {
-		ctx.strokeStyle = c;
-		ctx.lineWidth = w;
+		this.strokeStyle = c;
+		this.lineWidth = w;
 		this.beginPath();
 		this.moveTo(x - r, y - r - w / 2);
 		this.lineTo(x - r, y - l);
