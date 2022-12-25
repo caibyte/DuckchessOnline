@@ -217,23 +217,24 @@
 	const boardRect = new Rect(40, 40, 40 + wSize * blockSize, 40 + hSize * blockSize);
 	const textRect = new Rect(boardRect.left + 10, boardRect.bottom + 40, boardRect.right - 10, boardRect.bottom + 80);
 	const stageRect = new Rect(0, 0, boardRect.right + 40, textRect.bottom + 40);
+	const menuRect = new Rect(stageRect.right, 0, stageRect.right + 600, stageRect.bottom);
+	const appRect = new Rect(0, 0, menuRect.right, menuRect.bottom);
 	const errShowTime = 40, shineTime = 40, shakeTime = 10, curtainTime = 60;
 	const shakeDis = [0, 1, 1, 2, 2, 3, 4, 6, 9, 13, 20];
 	let map = [], badClick = [], shine = [], canChoose = [], move = 0;
-	let stage, ctx;
+	let stage, ctx, menu, restart;
 	let text = "红方下棋", textColor = "#f00";
 	let curtain = 0, curtainColor;
 	let windowWidth, windowHeight;
 	function resize() {
 		windowWidth = document.documentElement.clientWidth;
 		windowHeight = document.documentElement.clientHeight;
-		if (stage) {
-			stage.style.width = `${Math.min(windowWidth, windowHeight / stageRect.height * stageRect.width)}px`;
-			stage.style.height = `${Math.min(windowHeight, windowWidth / stageRect.width * stageRect.height)}px`;
-		}
+		const scale = Math.min(windowWidth / appRect.width, windowHeight / appRect.height);
+		stage.css({width: stageRect.width * scale, height: stageRect.height * scale});
+		menu.css({width: menuRect.width * scale, height: menuRect.height * scale - 200, fontSize: 24 * scale, padding: 20 * scale});
 	}
 	window.addEventListener('resize', resize);
-	async function init(callback) {
+	function init() {
 		//initalize game arrays
 		initMap.forEach((subArr, i) => {
 			map[i] = [...subArr];
@@ -244,26 +245,50 @@
 		badClick = Array(hSize).fill().map(() => Array(wSize).fill(0));
 		shine = Array(hSize).fill().map(() => Array(wSize).fill(0));
 		canChoose = Array(hSize).fill().map(() => Array(wSize).fill(false));
-		//create stage canvas
-		stage = document.createElement("canvas");
-		stage.width = stageRect.width;
-		stage.height = stageRect.height;
-		ctx = stage.getContext("2d");
+		//create stage canvas and menu elements
+		stage = $(`<canvas width="${stageRect.width}" height="${stageRect.height}"></canvas>`);
+		ctx = stage[0].getContext("2d");
+		menu = $(`<div id="menu"> <h3>菜单</h3>
+		<fieldset>
+			<legend>操作</legend>
+		</fieldset>
+		<fieldset>
+			<legend>关于</legend>
+			<p>这个项目由 <a href="https://github.com/caibyte">caibyte</a> 编写。</p>
+			<a href="https://github.com/caibyte/DuckchessOnline">github link</a>
+		</fieldset>
+		</div>`);
+		restart = $("<button class='btn'>重新开始</button>");
+		menu.children("fieldset")[0].append(restart[0]);
 		resize();
-		document.getElementById("main").append(stage);
-		stage.addEventListener("click", (e) => {
-			click.push({x: e.offsetX / stage.clientWidth * stageRect.width, y: e.offsetY / stage.clientHeight * stageRect.height});
+		restart.click(() => {
+			initMap.forEach((subArr, i) => {
+				map[i] = [...subArr];
+				subArr.forEach((element, j) => {
+					element.setPosition(i, j);
+				});
+			});
+			shine = Array(hSize).fill().map(() => Array(wSize).fill(0));
+			canChoose = Array(hSize).fill().map(() => Array(wSize).fill(false));
+			curTeam = 1;
+			text = "红方下棋";
+			textColor = "#f00";
+			curtainColor = "#fff";
+			curtain = curtainTime;
 		});
-		stage.addEventListener("mousemove", (e) => {
-			const cx = (boardRect.bottom - e.offsetY / stage.clientHeight * stageRect.height) / blockSize | 0;
-			const cy = (e.offsetX / stage.clientWidth * stageRect.width - boardRect.left) / blockSize | 0;
+		stage.click((e) => {
+			console.log(e);
+			click.push({x: e.offsetX / stage.width() * stageRect.width, y: e.offsetY / stage.height() * stageRect.height});
+		});
+		stage.mousemove((e) => {
+			const cx = (boardRect.bottom - e.offsetY / stage.height() * stageRect.height) / blockSize | 0;
+			const cy = (e.offsetX / stage.width() * stageRect.width - boardRect.left) / blockSize | 0;
 			if (cx < 0 || cx >= hSize || cy < 0 || cy >= wSize) hovering = null;
 			else hovering = {x: cx, y: cy};
 		});
+		$("#main").append(stage).append(menu);
 		//hide loading
-		document.getElementById("loading").style.display = "none";
-		//callback
-		callback();
+		$("#loading").hide();
 	}
 	let curTeam = 1; // current team to move
 	let hovering = null, selecting = null; // current chess piece selected
@@ -498,6 +523,7 @@
 		requestAnimationFrame(main);
 	}
 	window.addEventListener("load", () => {
-		init(main);
+		init();
+		main();
 	});
 }
