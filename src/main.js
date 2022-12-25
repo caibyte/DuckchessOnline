@@ -85,11 +85,11 @@
 				if (x1 === x2 && y1 !== y2) {
 					// Horizontally, check if there are non-empty elements between the 2 positions
 					const [left, right] = y1 < y2 ? [y1, y2] : [y2, y1];
-					return map[x1].slice(left+1, right).every((element) => element.isEmpty());
+					return map[x1].slice(left + 1, right).every((element) => element.isEmpty());
 				} else if (y1 === y2 && x1 !== x2) {
 					// Vertically, check if there are non-empty elements between the 2 positions
 					const [top, bottom] = x1 < x2 ? [x1, x2] : [x2, x1];
-					return map.slice(top+1, bottom).every((subArr) => subArr[y1].isEmpty());
+					return map.slice(top + 1, bottom).every((subArr) => subArr[y1].isEmpty());
 				}
 				return false;
 			},
